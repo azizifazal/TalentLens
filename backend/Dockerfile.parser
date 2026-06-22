@@ -1,0 +1,11 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+# requirements.txt is at the root of the build context (backend/)
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
+
+# Copy all backend source code into backend/ subdir inside the Lambda task root
+# so Python imports resolve as "backend.workers.parser_worker", etc.
+COPY . ${LAMBDA_TASK_ROOT}/backend/
+
+CMD ["backend.workers.parser_worker.handler"]

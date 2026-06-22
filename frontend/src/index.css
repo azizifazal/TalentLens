@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  ::selection {
+    background-color: #6c63ff;
+    color: #ffffff;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #6c63ff;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface rounded-card shadow-card border border-white/5;
+  }
+
+  .btn-primary {
+    @apply bg-accent hover:bg-accent/90 text-white font-semibold px-4 py-2 rounded-lg transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-raised hover:bg-surface-raised/80 text-text-primary font-medium px-4 py-2 rounded-lg transition-colors duration-200 border border-white/10;
+  }
+
+  .input-field {
+    @apply bg-surface border border-white/10 rounded-lg px-3 py-2 text-text-primary placeholder:text-muted focus:border-accent outline-none transition-colors duration-150;
+  }
+
+  .tag-chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm font-mono;
+  }
+}

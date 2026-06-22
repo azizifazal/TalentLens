@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_call: {}
+
+env:
+  AWS_DEFAULT_REGION: us-east-1
+  COGNITO_USER_POOL_ID: us-east-1_testpool
+  COGNITO_CLIENT_ID: test-client-id
+  S3_BUCKET_NAME: talentlens-resumes-test
+  OPENSEARCH_ENDPOINT: https://test.us-east-1.aoss.amazonaws.com
+  SQS_PARSE_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/123456789012/resume-parse-queue.fifo
+  SQS_RANK_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/123456789012/rank-job-queue.fifo
+
+jobs:
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run backend unit + integration tests
+        run: python -m pytest backend/tests/ -v --tb=short
+        env:
+          AWS_ACCESS_KEY_ID: testing
+          AWS_SECRET_ACCESS_KEY: testing
+
+      - name: Type-check FastAPI app loads
+        run: |
+          python -c "from backend.main import app; print(f'{len(app.routes)} routes registered')"
+
+  backend-lint:
+    name: Backend Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff==0.6.9
+
+      - name: Run ruff lint
+        run: ruff check backend/ --output-format=github
+
+      - name: Run ruff format check
+        run: ruff format backend/ --check
+
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc -b
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npx vitest run
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: https://placeholder.lambda-url.us-east-1.on.aws
+          VITE_COGNITO_USER_POOL_ID: us-east-1_placeholder
+          VITE_COGNITO_CLIENT_ID: placeholder-client-id
+
+  infra-test:
+    name: CDK Infrastructure Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    env:
+      CDK_DEFAULT_ACCOUNT: "123456789012"
+      CDK_DEFAULT_REGION: us-east-1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: infra/requirements.txt
+
+      - name: Install CDK dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install AWS CDK CLI
+        run: npm install -g aws-cdk@2
+
+      - name: Run CDK unit tests
+        run: python -m pytest tests/ -v
+
+      - name: CDK synth (validate templates)
+        run: cdk synth --quiet

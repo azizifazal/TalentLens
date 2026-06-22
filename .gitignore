@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.venv/
+venv/
+.env
+backend/.env
+infra/.env
+
+# Node / Frontend
+node_modules/
+dist/
+.tsbuild/
+*.tsbuildinfo
+.env.local
+.env.*.local
+
+# CDK
+infra/cdk.out/
+infra/*.tsbuildinfo
+infra/cdk-outputs*.json
+infra/auth-outputs.json
+infra/storage-outputs.json
+infra/compute-outputs.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+# Coverage
+htmlcov/
+.coverage
+coverage/
+
+# Production environment files (contain live AWS resource IDs - do not commit)
+frontend/.env.production
+frontend/.env.production.local
+
+# Deployment artifacts
+cors.json
+deploy-outputs.json
+*.json.bak
+
+# Python venvs (all locations)
+.venv/
+infra/.venv/
+backend/.venv/
+
+# Lambda test artifacts
+event.json
+response.json

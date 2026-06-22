@@ -1,0 +1,17 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["backend/tests", ".venv", "cdk.out"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = [
+    "E501",   # line length handled by formatter
+    "B008",   # FastAPI's Depends()/Security() in defaults is the idiomatic pattern
+    "B904",   # explicit exception chaining not enforced for this codebase
+    "UP007",  # Optional[X] kept for Pydantic v1/v2 cross-compat readability
+    "UP017",  # datetime.timezone.utc kept explicit for clarity
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend"]
