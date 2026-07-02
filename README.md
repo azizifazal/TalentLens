@@ -4,11 +4,12 @@ AI-powered candidate ranking and shortlisting engine, built on AWS Bedrock, Open
 Serverless, DynamoDB, S3, Cognito, and Lambda.
 
 TalentLens moves beyond keyword filtering: it deeply parses job descriptions (including
-behavioral success traits), parses resumes into structured profiles, computes a 6-dimension
+behavioral success traits), parses resumes into structured profiles, and computes a 6-dimensional
 Behavioral Signal Engine score, runs semantic vector search, matches success traits with an
 AI-grounded evidence engine, and produces a ranked, explainable shortlist — all without ever
 scoring candidates on company prestige.
 
+Video Link: https://drive.google.com/file/d/1QuAWFMxtbytSGqOYOJYfQ0GPvn-nwbPL/view?usp=sharing
 ---
 
 ## 1. Repository Structure
